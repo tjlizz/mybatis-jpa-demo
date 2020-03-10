@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="lzz.mybatis.demo.hello.dao.UserDao">
+<mapper namespace="lz.cim.api.mybatis.dao.UserDao">
 
-    <select id="findByUserNamelzz" parameterType="String" resultType="lzz.mybatis.demo.hello.model.User">
-        SELECT * FROM user WHERE name = #{name}
+    <select id="lzzselectpage" parameterType="String" resultType="lz.cim.api.mybatis.model.User">
+         select a.* from  USERINFO a inner join CIM_ATTACHMENT b on a.ID=b.ID
     </select>
 </mapper>
