@@ -35,6 +35,8 @@ public class ProjectModel {
     @Column(name = "VERSION")
     private Integer version;
 
+
+
     @JoinColumn(name = "ATTCHMENTID")
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     private AttachmentModel attachment;

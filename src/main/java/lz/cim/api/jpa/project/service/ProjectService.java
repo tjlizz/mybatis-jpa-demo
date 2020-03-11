@@ -9,4 +9,7 @@ import java.util.List;
 public interface ProjectService {
     Page<ProjectModel> getListByPage(int pageIndex,int pageSize,String projectCode,String fileName);
 
+
+     ProjectModel save(ProjectModel projectModel);
+
 }

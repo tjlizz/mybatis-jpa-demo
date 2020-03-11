@@ -1,9 +1,6 @@
 package lz.cim.api.jpa.attchment.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -24,6 +21,17 @@ public class AttachmentModel {
     private Date createTime;
     @Column(name = "USERID")
     private String userId;
+
+    @Column(name = "KEY")
+    private String key;
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 
     public String getUserId() {
         return userId;

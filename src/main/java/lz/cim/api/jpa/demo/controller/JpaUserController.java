@@ -2,7 +2,7 @@ package lz.cim.api.jpa.demo.controller;
 
 import lz.cim.api.jpa.demo.model.Attachment;
 import lz.cim.api.jpa.demo.model.UserModel;
-import lz.cim.api.jpa.demo.repository.AttachmentRepository;
+import lz.cim.api.jpa.demo.repository.AttachmentRepository1;
 import lz.cim.api.jpa.demo.service.JpaUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +18,7 @@ public class JpaUserController {
     JpaUserService jpaUserService;
 
     @Autowired
-    AttachmentRepository attachmentRepository;
+    AttachmentRepository1 attachmentRepository1;
 
     @RequestMapping("/get")
     public List<Attachment> getAll() {
@@ -26,6 +26,6 @@ public class JpaUserController {
         UserModel userModel = new UserModel();
         userModel.setId("1");
 
-        return attachmentRepository.findAllByCreate(userModel);
+        return attachmentRepository1.findAllByCreate(userModel);
     }
 }

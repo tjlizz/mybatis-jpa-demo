@@ -30,7 +30,7 @@ public class ProjectServiceImpl implements ProjectService {
     ProjectRepository projectRepository;
 
     @Override
-    public Page<ProjectModel> getListByPage( int pageIndex, int pageSize, String projectCode, String fileName) {
+    public Page<ProjectModel> getListByPage(int pageIndex, int pageSize, String projectCode, String fileName) {
 
 
         PageRequest pageRequest = new PageRequest(pageIndex - 1, pageSize);
@@ -48,5 +48,10 @@ public class ProjectServiceImpl implements ProjectService {
         };
 
         return projectRepository.findAll(spec, pageRequest);
+    }
+
+    @Override
+    public ProjectModel save(ProjectModel projectModel) {
+        return projectRepository.save(projectModel);
     }
 }
