@@ -1,18 +1,24 @@
 package lz.cim.api.jpa.project.model;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lz.cim.api.jpa.attchment.model.AttachmentModel;
-import lz.cim.api.jpa.demo.model.UserModel;
 
 import javax.persistence.*;
 import java.util.Date;
 
+@ApiModel(value = "模型类")
 @Entity
 @Table(name = "CIM_PROJECT_MODEL")
 public class ProjectModel {
+    public ProjectModel() {
+        this.version = 1;
+    }
 
     @Id
     @Column(name = "ID")
     private String id;
+    @ApiModelProperty(value = "工程编码")
     @Column(name = "PROJECTCODE")
     private String projectCode;
     @Column(name = "LAYERCODE")
@@ -34,7 +40,6 @@ public class ProjectModel {
 
     @Column(name = "VERSION")
     private Integer version;
-
 
 
     @JoinColumn(name = "ATTCHMENTID")

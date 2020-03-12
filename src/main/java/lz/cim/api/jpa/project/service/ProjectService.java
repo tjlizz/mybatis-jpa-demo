@@ -7,9 +7,13 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface ProjectService {
-    Page<ProjectModel> getListByPage(int pageIndex,int pageSize,String projectCode,String fileName);
+    Page<ProjectModel> getListByPage(int pageIndex, int pageSize, String projectCode, String fileName, String layerCode) throws Exception;
 
 
-     ProjectModel save(ProjectModel projectModel);
+    ProjectModel getByProjectCodeAndLayerCode(String projectCode, String layerCode);
+
+    ProjectModel save(ProjectModel projectModel);
+
+    ProjectModel update(ProjectModel projectModel);
 
 }

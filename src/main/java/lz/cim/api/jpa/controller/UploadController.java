@@ -1,6 +1,8 @@
 package lz.cim.api.jpa.controller;
 
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lz.cim.api.core.config.AppProperties;
 import lz.cim.api.core.tool.Common;
 import lz.cim.api.core.upload.FileUtil;
@@ -17,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
+@Api(tags = "附件服务", description = "附件上传")
 @RestController
 @RequestMapping("/webuploader")
 public class UploadController {
@@ -28,7 +30,7 @@ public class UploadController {
     @Autowired
     AttachmentService attachmentService;
 
-
+    @ApiOperation("上传接口")
     @PostMapping("/upload")
     @ResponseBody
     public String upload(@RequestParam("file") MultipartFile file, @RequestParam("chunk") int chunk, @RequestParam("fileMd5") String fileMd5) {
@@ -51,7 +53,7 @@ public class UploadController {
         }
         return "上传失败！";
     }
-
+    @ApiOperation("检测文件是否存在")
     @PostMapping("/check")
     @ResponseBody
     public ResponseEntity<?> check(@RequestParam("fileMd5") String fileMd5, @RequestParam("chunk") int chunk,
@@ -140,7 +142,7 @@ public class UploadController {
 
     }
 
-
+    @ApiOperation("文件合并")
     @PostMapping("/merge")
     @ResponseBody
     public ResponseEntity<?> merge(@RequestParam("fileName") String fileName, @RequestParam("fileMd5") String fileMd5, @RequestParam("chunks") Integer chunks) throws IOException {

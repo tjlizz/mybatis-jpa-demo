@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface AttachmentRepository extends JpaRepository<AttachmentModel, String> {
 
-    List<AttachmentModel> findAllByKey(String key);
 
-     List<AttachmentModel> findAllById(String id);
+  List<AttachmentModel> getAllByKey(String key);
+    List<AttachmentModel> findAllById(String id);
 
 }

@@ -27,7 +27,7 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     @Override
     public List<AttachmentModel> getByKey(String key) {
-        return attachmentRepository.findAllByKey(key);
+        return attachmentRepository.getAllByKey(key);
     }
 
     @Override
