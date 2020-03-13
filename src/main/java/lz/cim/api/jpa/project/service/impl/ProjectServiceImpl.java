@@ -71,9 +71,13 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
 
-
     @Override
     public ProjectModel update(ProjectModel projectModel) {
         return projectRepository.saveAndFlush(projectModel);
+    }
+
+    @Override
+    public void delete(String id) {
+        projectRepository.deleteById(id);
     }
 }

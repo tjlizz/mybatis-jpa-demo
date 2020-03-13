@@ -62,16 +62,46 @@ public class ProjectController {
                 reslutView.setCode("1");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(reslutView);
             }
-
-
             switch (projectModel.getLayerCode()) {
 
                 case "1"://场布
                     fieldCloth(projectModel, reslutView, attachmentModel);
                     break;
 
+                default:
+                    projectModel.setAttachment(attachmentModel);
+                    if (projectModel.getId() != null) {
+                        projectService.update(projectModel);
+                    } else {
+                        projectModel.setId(Common.GetKey());
+                        projectModel.setSubCodeName(null);
+                        projectModel.setCreateTime(Common.GetDateTime());
+                        projectService.save(projectModel);
+                    }
+                    reslutView.setData(projectModel);
+                    break;
             }
 
+
+        } catch (Exception ex) {
+            log.error(ErrorTool.getErrerInfo(ex));
+            reslutView.setCode("1");
+            reslutView.setData(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(reslutView);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(reslutView);
+    }
+
+    @ApiOperation("设计模型删除")
+    @RequestMapping(
+            value = "/design/{id}",
+            method = RequestMethod.DELETE,
+            consumes = "application/json")
+    public ResponseEntity<?> deleteDesign(@PathVariable String id) {
+        ReslutView reslutView = new ReslutView();
+        try {
+
+            projectService.delete(id);
 
         } catch (Exception ex) {
             log.error(ErrorTool.getErrerInfo(ex));
@@ -91,11 +121,12 @@ public class ProjectController {
      */
     private void fieldCloth(@RequestBody ProjectModel projectModel, ReslutView reslutView, AttachmentModel attachmentModel) {
         ProjectModel projectData = projectService.getByProjectCodeAndLayerCode(projectModel.getProjectCode(), projectModel.getLayerCode());
+        projectModel.setSubCodeName(null);
+
         if (null == projectData) {
             projectModel.setId(Common.GetKey());
             projectModel.setAttachment(attachmentModel);
             projectModel.setCreateTime(Common.GetDateTime());
-            projectModel.setSubCodeName(null);
             projectService.save(projectModel);
             reslutView.setData(projectModel);
         } else {

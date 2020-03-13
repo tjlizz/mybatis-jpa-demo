@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
 @Api(tags = "附件服务", description = "附件上传")
 @RestController
 @RequestMapping("/webuploader")
@@ -31,9 +32,9 @@ public class UploadController {
     AttachmentService attachmentService;
 
     @ApiOperation("上传接口")
-    @PostMapping("/upload")
+    @PostMapping("/bigupload")
     @ResponseBody
-    public String upload(@RequestParam("file") MultipartFile file, @RequestParam("chunk") int chunk, @RequestParam("fileMd5") String fileMd5) {
+    public String bigUpload(@RequestParam("file") MultipartFile file, @RequestParam(value = "chunk", required = false) int chunk, @RequestParam("fileMd5") String fileMd5) {
         if (file.isEmpty()) {
             return "上传失败，请选择文件";
         }
@@ -53,6 +54,40 @@ public class UploadController {
         }
         return "上传失败！";
     }
+
+    @ApiOperation("上传接口")
+    @PostMapping("/upload")
+    @ResponseBody
+    public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file, @RequestParam("fileMd5") String fileMd5) {
+        ReslutView reslutView = new ReslutView();
+        if (file.isEmpty()) {
+            reslutView.setMsg("未选择文件");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(reslutView);
+        }
+        String savePath = appProperties.getSavePath();
+        IoHelper.judeDirExists(savePath);
+        String date = Common.getStringDate();
+        String fileName = file.getOriginalFilename();
+
+        String saveName = Common.GetKey() + "." + Common.GetSuffix(fileName);
+        savePath += "\\" + date;
+        IoHelper.judeDirExists(savePath);
+
+        savePath = savePath + "\\" + saveName;
+
+        File dest = new File(savePath);
+        try {
+            file.transferTo(dest);
+            AttachmentModel attachmentModel = getAttachmentModel(fileName, fileMd5, saveName, date);
+            reslutView.setData(attachmentModel.getId());
+
+        } catch (IOException e) {
+
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(reslutView);
+    }
+
+
     @ApiOperation("检测文件是否存在")
     @PostMapping("/check")
     @ResponseBody
@@ -99,7 +134,7 @@ public class UploadController {
     }
 
 
-    private ReslutView saveFile(String fileName, String fileMd5, int chunks) throws IOException {
+    private ReslutView saveBigFile(String fileName, String fileMd5, int chunks) throws IOException {
         ReslutView reslutView = new ReslutView();
         int blockFileSize = 1024 * 1024 * 5;
         String uploadPath = appProperties.getUploadPath() + "\\" + fileMd5;
@@ -129,6 +164,13 @@ public class UploadController {
             fileUtil.mergePartFiles(uploadPath, ".aaa",
                     blockFileSize, filePath);
         }
+        AttachmentModel attachmentModel = getAttachmentModel(fileName, fileMd5, saveName, date);
+        reslutView.setData(attachmentModel.getId());
+        return reslutView;
+
+    }
+
+    private AttachmentModel getAttachmentModel(String fileName, String fileMd5, String saveName, String date) {
         AttachmentModel attachmentModel = new AttachmentModel();
         attachmentModel.setId(Common.GetKey());
         attachmentModel.setKey(fileMd5);
@@ -137,9 +179,7 @@ public class UploadController {
         attachmentModel.setFileName(saveName);
         attachmentModel.setOldName(fileName);
         attachmentService.save(attachmentModel);
-        reslutView.setData(attachmentModel.getId());
-        return reslutView;
-
+        return attachmentModel;
     }
 
     @ApiOperation("文件合并")
@@ -148,7 +188,7 @@ public class UploadController {
     public ResponseEntity<?> merge(@RequestParam("fileName") String fileName, @RequestParam("fileMd5") String fileMd5, @RequestParam("chunks") Integer chunks) throws IOException {
 
         ReslutView reslutView = new ReslutView();
-        reslutView = saveFile(fileName, fileMd5, chunks);
+        reslutView = saveBigFile(fileName, fileMd5, chunks);
 
         return ResponseEntity.status(HttpStatus.OK).body(reslutView);
     }

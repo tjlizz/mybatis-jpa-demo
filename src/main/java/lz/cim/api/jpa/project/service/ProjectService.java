@@ -16,4 +16,6 @@ public interface ProjectService {
 
     ProjectModel update(ProjectModel projectModel);
 
+      void  delete(String id);
+
 }
