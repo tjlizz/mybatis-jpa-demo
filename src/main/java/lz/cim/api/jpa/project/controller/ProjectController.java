@@ -58,7 +58,7 @@ public class ProjectController {
         try {
             AttachmentModel attachmentModel = attachmentService.getById(projectModel.getSubCodeName());
             if (attachmentModel == null) {
-                reslutView.setData("请上传附件");
+                reslutView.setMsg("请上传附件");
                 reslutView.setCode("1");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(reslutView);
             }

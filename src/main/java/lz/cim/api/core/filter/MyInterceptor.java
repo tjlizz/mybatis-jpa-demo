@@ -11,7 +11,10 @@ public class MyInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         String token = request.getHeader("token");
+
+
         if (token == null) return true;
+
         if (token.equals("1"))
             return true;
         return false;

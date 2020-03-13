@@ -11,7 +11,6 @@ import java.util.zip.ZipFile;
 
 
 public class ZipTool {
-    public static final Charset GBK = Charset.forName("GBK");
     private static final int BUFFER_SIZE = 2 * 1024;
     public static void unZip(File srcFile, String destDirPath) throws RuntimeException {
         long start = System.currentTimeMillis();
@@ -22,7 +21,7 @@ public class ZipTool {
         // 开始解压
         ZipFile zipFile = null;
         try {
-            zipFile = new ZipFile(srcFile,GBK);
+            zipFile = new ZipFile(srcFile, Charset.forName("GBK"));
             Enumeration<?> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = (ZipEntry) entries.nextElement();
