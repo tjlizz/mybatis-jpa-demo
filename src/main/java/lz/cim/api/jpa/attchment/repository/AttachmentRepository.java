@@ -9,7 +9,8 @@ import java.util.List;
 public interface AttachmentRepository extends JpaRepository<AttachmentModel, String> {
 
 
-  List<AttachmentModel> getAllByKey(String key);
+    List<AttachmentModel> getAllByKey(String key);
+
     List<AttachmentModel> findAllById(String id);
 
 }

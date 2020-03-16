@@ -37,14 +37,21 @@ public class ProjectModel {
     private String buildingCode;
     @Column(name = "SPECIALITY")
     private String speciality;
-
     @Column(name = "VERSION")
     private Integer version;
-
-
     @JoinColumn(name = "ATTCHMENTID")
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     private AttachmentModel attachment;
+    @Column(name = "STAGE")
+    private String stage;
+
+    public String getStage() {
+        return stage;
+    }
+
+    public void setStage(String stage) {
+        this.stage = stage;
+    }
 
     public AttachmentModel getAttachment() {
         return attachment;

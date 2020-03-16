@@ -13,7 +13,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(handlerInterceptor())
                 //配置拦截规则
                 .addPathPatterns("/**");
-
     }
     @Bean
     public HandlerInterceptor handlerInterceptor() {

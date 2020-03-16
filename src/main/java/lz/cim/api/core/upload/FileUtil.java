@@ -65,9 +65,7 @@ public class FileUtil {
      */
     public static ArrayList<File> getAllFiles(String dirPath) {
         File dir = new File(dirPath);
-
         ArrayList<File> files = new ArrayList<File>();
-
         if (dir.isDirectory()) {
             File[] fileArr = dir.listFiles();
             for (int i = 0; i < fileArr.length; i++) {
@@ -81,7 +79,6 @@ public class FileUtil {
         }
         return files;
     }
-
     /**
      * 获取指定目录下的所有文件(不包括子文件夹)
      *
@@ -92,7 +89,6 @@ public class FileUtil {
         File path = new File(dirPath);
         File[] fileArr = path.listFiles();
         ArrayList<File> files = new ArrayList<File>();
-
         for (File f : fileArr) {
             if (f.isFile()) {
                 files.add(f);
@@ -100,7 +96,6 @@ public class FileUtil {
         }
         return files;
     }
-
     /**
      * 获取指定目录下特定文件后缀名的文件列表(不包括子文件夹)
      *

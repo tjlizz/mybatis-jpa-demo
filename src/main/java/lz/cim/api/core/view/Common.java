@@ -5,19 +5,15 @@ public class Common {
     private int pageid;
     private int pagebegin;
     private int count;
-
     public int getPagesize() {
         return pagesize;
     }
-
     public void setPagesize(int pagesize) {
         this.pagesize = pagesize;
     }
-
     public int getPageid() {
         return pageid;
     }
-
     public void setPageid(int pageid) {
         this.pageid = pageid;
     }

@@ -70,7 +70,7 @@ public class ProjectController {
 
                 default:
                     projectModel.setAttachment(attachmentModel);
-                    if (projectModel.getId() != null) {
+                    if (projectModel.getId() != null&&!projectModel.getId().trim().isEmpty()) {
                         projectService.update(projectModel);
                     } else {
                         projectModel.setId(Common.GetKey());
