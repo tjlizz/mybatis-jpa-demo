@@ -1,5 +1,6 @@
 package lz.cim.api.jpa.project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lz.cim.api.jpa.attchment.model.AttachmentModel;
@@ -10,6 +11,7 @@ import java.util.Date;
 @ApiModel(value = "模型类")
 @Entity
 @Table(name = "CIM_PROJECT_MODEL")
+@JsonIgnoreProperties(value={"hibernateLazyInitializer"})
 public class ProjectModel {
     public ProjectModel() {
         this.version = 1;

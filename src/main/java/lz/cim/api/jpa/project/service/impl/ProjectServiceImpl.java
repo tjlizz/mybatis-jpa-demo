@@ -80,4 +80,9 @@ public class ProjectServiceImpl implements ProjectService {
     public void delete(String id) {
         projectRepository.deleteById(id);
     }
+
+    @Override
+    public ProjectModel getById(String id) {
+        return projectRepository.getOne(id);
+    }
 }

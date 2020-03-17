@@ -16,6 +16,8 @@ public interface ProjectService {
 
     ProjectModel update(ProjectModel projectModel);
 
-      void  delete(String id);
+    void delete(String id);
+
+     ProjectModel getById(String id);
 
 }

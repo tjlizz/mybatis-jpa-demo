@@ -70,7 +70,7 @@ public class ProjectController {
 
                 default:
                     projectModel.setAttachment(attachmentModel);
-                    if (projectModel.getId() != null&&!projectModel.getId().trim().isEmpty()) {
+                    if (projectModel.getId() != null && !projectModel.getId().trim().isEmpty()) {
                         projectService.update(projectModel);
                     } else {
                         projectModel.setId(Common.GetKey());
@@ -111,6 +111,27 @@ public class ProjectController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(reslutView);
     }
+
+    @ApiOperation("根据ID设计模型查询")
+    @RequestMapping(path = {"/{id}"}, method = RequestMethod.GET)
+    public ResponseEntity<?> getById(@PathVariable(value = "id", required = true) String id) {
+
+        ReslutView reslutView = new ReslutView();
+        try {
+
+            ProjectModel projectModel=projectService.getById(id);
+            reslutView.setData(projectModel);
+        } catch (Exception ex) {
+            log.error(ErrorTool.getErrerInfo(ex));
+            reslutView.setCode("1");
+            reslutView.setData(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(reslutView);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(reslutView);
+
+
+    }
+
 
     /**
      * 场布类型保存逻辑
