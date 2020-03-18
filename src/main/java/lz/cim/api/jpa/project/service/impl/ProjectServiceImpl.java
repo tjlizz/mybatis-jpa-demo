@@ -38,19 +38,21 @@ public class ProjectServiceImpl implements ProjectService {
         Specification<ProjectModel> spec = new Specification<ProjectModel>() {
             @Override
             public Predicate toPredicate(Root<ProjectModel> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
+
+
+                Predicate codePredicate = cb.equal(root.get("projectCode"), projectCode);
+
+
+                Predicate layerPredicate = cb.equal(root.get("layerCode"), layerCode);
+
+
                 if (fileName != null && !fileName.trim().isEmpty()) {
                     Join<ProjectModel, AttachmentModel> fuJoin = root.join(root.getModel().getSingularAttribute("attachment", AttachmentModel.class), JoinType.INNER);
                     Predicate p2 = cb.like((Expression<String>) fuJoin.get("fileName").as(String.class), "%" + fileName + "%");
-                    criteriaQuery.where(cb.and(p2));
-                }
+                    criteriaQuery.where(cb.and(p2), cb.and(codePredicate), cb.and(layerPredicate));
+                } else {
+                    criteriaQuery.where(cb.and(codePredicate), cb.and(layerPredicate));
 
-                if (projectCode != null && !projectCode.trim().isEmpty()) {
-                    Predicate codePredicate = cb.equal(root.get("projectCode"), projectCode);
-                    criteriaQuery.where(cb.and(codePredicate));
-                }
-                if (layerCode != null && !layerCode.trim().isEmpty()) {
-                    Predicate layerPredicate = cb.equal(root.get("layerCode"), layerCode);
-                    criteriaQuery.where(cb.and(layerPredicate));
                 }
 
                 return criteriaQuery.getRestriction();
