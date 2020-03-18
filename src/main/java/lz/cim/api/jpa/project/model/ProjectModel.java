@@ -11,7 +11,7 @@ import java.util.Date;
 @ApiModel(value = "模型类")
 @Entity
 @Table(name = "CIM_PROJECT_MODEL")
-@JsonIgnoreProperties(value={"hibernateLazyInitializer"})
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 public class ProjectModel {
     public ProjectModel() {
         this.version = 1;
@@ -44,8 +44,21 @@ public class ProjectModel {
     @JoinColumn(name = "ATTCHMENTID")
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     private AttachmentModel attachment;
+
+    @JoinColumn(name = "XMLID")
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    private AttachmentModel attachmentXml;
+
     @Column(name = "STAGE")
     private String stage;
+
+    public AttachmentModel getAttachmentXml() {
+        return attachmentXml;
+    }
+
+    public void setAttachmentXml(AttachmentModel attachmentXml) {
+        this.attachmentXml = attachmentXml;
+    }
 
     public String getStage() {
         return stage;

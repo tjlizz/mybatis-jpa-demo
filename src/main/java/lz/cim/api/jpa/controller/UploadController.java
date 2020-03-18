@@ -5,6 +5,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lz.cim.api.core.config.AppProperties;
 import lz.cim.api.core.tool.Common;
+import lz.cim.api.core.tool.DownloadTool;
 import lz.cim.api.core.upload.FileUtil;
 import lz.cim.api.core.upload.IoHelper;
 import lz.cim.api.core.view.ReslutView;
@@ -16,13 +17,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 @Api(tags = "附件服务", description = "附件上传")
 @RestController
-@RequestMapping("/webuploader")
+@RequestMapping("/api")
 public class UploadController {
 
     @Autowired
@@ -165,7 +167,7 @@ public class UploadController {
                     blockFileSize, filePath);
         }
         AttachmentModel attachmentModel = getAttachmentModel(fileName, fileMd5, saveName, date);
-        reslutView.setData(attachmentModel.getId());
+        reslutView.setData(attachmentModel);
         return reslutView;
 
     }
@@ -191,6 +193,18 @@ public class UploadController {
         reslutView = saveBigFile(fileName, fileMd5, chunks);
 
         return ResponseEntity.status(HttpStatus.OK).body(reslutView);
+    }
+
+    @ApiOperation("下载文件")
+    @GetMapping("/download/{id}")
+    public void download(@PathVariable(name = "id") String id, HttpServletResponse httpServletResponse) {
+
+        AttachmentModel attachmentModel = attachmentService.getById(id);
+        if (attachmentModel == null) return;
+
+        String path = appProperties.getSavePath() + "\\" + attachmentModel.getFilePath();
+
+        DownloadTool.download(path, httpServletResponse, attachmentModel.getOldName());
     }
 
 }

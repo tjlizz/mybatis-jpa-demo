@@ -61,12 +61,14 @@
 
             <systemPath>${project.basedir}/src/main/resources/lib/DmJdbcDriver18.jar</systemPath>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-
-            <version>1.2.61</version>
+            <version>1.2.66</version>
         </dependency>
+
         <dependency>
             <groupId>com.dm</groupId>
             <artifactId>hibernate5</artifactId>

@@ -66,17 +66,40 @@ public class ProjectController {
 
                 case "1"://场布
                     fieldCloth(projectModel, reslutView, attachmentModel);
+                    if (reslutView.getCode().equals("1"))
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(reslutView);
+
                     break;
 
+                case "2":
+                    AttachmentModel xml = attachmentService.getById(projectModel.getStage());//XML附件
+                    projectModel.setStage(null);
+                    if (null == xml) {
+                        reslutView.setMsg("请上传XML文件");
+                        reslutView.setCode("1");
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(reslutView);
+
+                    }
+                    if (projectModel.getId() == null || projectModel.getId().trim().equals("")) {
+                        projectModel.setAttachmentXml(xml);
+                        projectModel.setAttachment(attachmentModel);
+                        saveProject(projectModel);
+                    } else {
+                        ProjectModel projectData = projectService.getById(projectModel.getId());
+                        projectData.setBuildingCode(projectModel.getBuildingCode());
+                        projectData.setSpeciality(projectModel.getSpeciality());
+                        projectData.setAttachmentXml(attachmentModel);
+                        projectData.setAttachmentXml(xml);
+                        projectService.update(projectData);
+                    }
+
+                    break;
                 default:
                     projectModel.setAttachment(attachmentModel);
                     if (projectModel.getId() != null && !projectModel.getId().trim().isEmpty()) {
                         projectService.update(projectModel);
                     } else {
-                        projectModel.setId(Common.GetKey());
-                        projectModel.setSubCodeName(null);
-                        projectModel.setCreateTime(Common.GetDateTime());
-                        projectService.save(projectModel);
+                        saveProject(projectModel);
                     }
                     reslutView.setData(projectModel);
                     break;
@@ -90,6 +113,13 @@ public class ProjectController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(reslutView);
         }
         return ResponseEntity.status(HttpStatus.OK).body(reslutView);
+    }
+
+    private void saveProject(@RequestBody ProjectModel projectModel) {
+        projectModel.setId(Common.GetKey());
+        projectModel.setSubCodeName(null);
+        projectModel.setCreateTime(Common.GetDateTime());
+        projectService.save(projectModel);
     }
 
     @ApiOperation("设计模型删除")
@@ -119,7 +149,7 @@ public class ProjectController {
         ReslutView reslutView = new ReslutView();
         try {
 
-            ProjectModel projectModel=projectService.getById(id);
+            ProjectModel projectModel = projectService.getById(id);
             reslutView.setData(projectModel);
         } catch (Exception ex) {
             log.error(ErrorTool.getErrerInfo(ex));
@@ -128,11 +158,7 @@ public class ProjectController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(reslutView);
         }
         return ResponseEntity.status(HttpStatus.OK).body(reslutView);
-
-
     }
-
-
     /**
      * 场布类型保存逻辑
      *
@@ -140,24 +166,31 @@ public class ProjectController {
      * @param reslutView
      * @param attachmentModel
      */
-    private void fieldCloth(@RequestBody ProjectModel projectModel, ReslutView reslutView, AttachmentModel attachmentModel) {
+    private void fieldCloth(@RequestBody ProjectModel projectModel, ReslutView reslutView, AttachmentModel
+            attachmentModel) {
         ProjectModel projectData = projectService.getByProjectCodeAndLayerCode(projectModel.getProjectCode(), projectModel.getLayerCode());
-        projectModel.setSubCodeName(null);
+        AttachmentModel xml = attachmentService.getById(projectModel.getBuildingCode());//XML附件
+        projectModel.setBuildingCode(null);
+        if (null == xml) {
+            reslutView.setMsg("请上传XML文件");
+            reslutView.setCode("1");
+            return;
 
+        }
+
+
+        projectModel.setSubCodeName(null);
+        projectModel.setAttachmentXml(xml);
         if (null == projectData) {
-            projectModel.setId(Common.GetKey());
-            projectModel.setAttachment(attachmentModel);
-            projectModel.setCreateTime(Common.GetDateTime());
-            projectService.save(projectModel);
+            saveProject(projectModel);
             reslutView.setData(projectModel);
         } else {
-            projectData.setAttachment(attachmentModel);
+            projectModel.setId(projectData.getId());
             projectModel.setCreateTime(Common.GetDateTime());
-            projectData.setBuildingCode(projectModel.getBuildingCode());
-            projectData.setSpeciality(projectModel.getSpeciality());
-            projectData.setVersion(projectData.getVersion() + 1);
-            projectService.update(projectData);
-            reslutView.setData(projectData);
+            projectModel.setVersion(projectData.getVersion() + 1);
+            projectModel.setAttachment(attachmentModel);
+            projectService.update(projectModel);
+            reslutView.setData(projectModel);
         }
 
     }

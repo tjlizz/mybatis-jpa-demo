@@ -39,7 +39,7 @@ public class AttachmentController {
             newAttachmentModel.setFilePath(attachmentModel.getFilePath());
             newAttachmentModel.setCreateTime(Common.GetDateTime());
             attachmentService.save(newAttachmentModel);
-            reslutView.setData(newAttachmentModel.getId());
+            reslutView.setData(newAttachmentModel);
             reslutView.setCode("2");
             return ResponseEntity.status(HttpStatus.OK).body(reslutView);
         }
