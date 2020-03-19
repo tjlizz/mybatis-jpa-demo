@@ -36,15 +36,14 @@ public class ProjectController {
     @RequestMapping(path = {"/getall"}, method = RequestMethod.GET)
     public ResponseEntity<?> finfAll(@RequestParam("page") Integer page, @RequestParam("limit") Integer limit,
                                      @RequestParam("projectCode") String projectCode, @RequestParam("fileName") String fileName,
-                                     @RequestParam("layerCode") String layerCode, @RequestHeader("token") String token) {
+                                     @RequestParam("layerCode") String layerCode, @RequestHeader("token") String token) throws Exception {
         ReslutView reslutView = new ReslutView();
-        try {
-            Page<ProjectModel> projectModels = projectService.getListByPage(page, limit, projectCode, fileName, layerCode);
-            reslutView.setData(projectModels.getContent());
-            reslutView.setCount(projectModels.getTotalElements());
-        } catch (Exception ex) {
-            log.error(ErrorTool.getErrerInfo(ex));
-        }
+
+
+        Page<ProjectModel> projectModels = projectService.getListByPage(page, limit, projectCode, fileName, layerCode);
+        reslutView.setData(projectModels.getContent());
+        reslutView.setCount(projectModels.getTotalElements());
+
         return ResponseEntity.status(HttpStatus.OK).body(reslutView);
     }
 
@@ -55,69 +54,147 @@ public class ProjectController {
             consumes = "application/json")
     public ResponseEntity<?> saveDesign(@RequestBody ProjectModel projectModel) {
         ReslutView reslutView = new ReslutView();
-        try {
-            AttachmentModel attachmentModel = attachmentService.getById(projectModel.getSubCodeName());
-            if (attachmentModel == null) {
-                reslutView.setMsg("请上传附件");
-                reslutView.setCode("1");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(reslutView);
-            }
-            switch (projectModel.getLayerCode()) {
-
-                case "1"://场布
-                    fieldCloth(projectModel, reslutView, attachmentModel);
-                    if (reslutView.getCode().equals("1"))
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(reslutView);
-
-                    break;
-
-                case "2":
-                    AttachmentModel xml = attachmentService.getById(projectModel.getStage());//XML附件
-                    projectModel.setStage(null);
-                    if (null == xml) {
-                        reslutView.setMsg("请上传XML文件");
-                        reslutView.setCode("1");
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(reslutView);
-
-                    }
-                    if (projectModel.getId() == null || projectModel.getId().trim().equals("")) {
-                        projectModel.setAttachmentXml(xml);
-                        projectModel.setAttachment(attachmentModel);
-                        saveProject(projectModel);
-                    } else {
-                        ProjectModel projectData = projectService.getById(projectModel.getId());
-                        projectData.setBuildingCode(projectModel.getBuildingCode());
-                        projectData.setSpeciality(projectModel.getSpeciality());
-                        projectData.setAttachmentXml(attachmentModel);
-                        projectData.setAttachmentXml(xml);
-                        projectService.update(projectData);
-                    }
-
-                    break;
-                default:
-                    projectModel.setAttachment(attachmentModel);
-                    if (projectModel.getId() != null && !projectModel.getId().trim().isEmpty()) {
-                        projectService.update(projectModel);
-                    } else {
-                        saveProject(projectModel);
-                    }
-                    reslutView.setData(projectModel);
-                    break;
-            }
-
-
-        } catch (Exception ex) {
-            log.error(ErrorTool.getErrerInfo(ex));
+        AttachmentModel attachmentModel = attachmentService.getById(projectModel.getSubCodeName());
+        if (attachmentModel == null) {
+            reslutView.setMsg("请上传附件");
             reslutView.setCode("1");
-            reslutView.setData(ex.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(reslutView);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(reslutView);
+        }
+        projectModel.setAttachment(attachmentModel);
+        if (projectModel.getId() != null && !projectModel.getId().trim().isEmpty()) {
+            projectService.update(projectModel);
+        } else {
+
+            saveProject(projectModel);
+        }
+        reslutView.setData(projectModel);
+        return ResponseEntity.status(HttpStatus.OK).body(reslutView);
+    }
+
+    @ApiOperation("场布模型保存")
+    @RequestMapping(
+            value = "/updatelayout",
+            method = RequestMethod.POST,
+            consumes = "application/json")
+    public ResponseEntity<?> updatelayout(@RequestBody ProjectModel projectModel) {
+        ReslutView reslutView = new ReslutView();
+        AttachmentModel attachmentModel = attachmentService.getById(projectModel.getSubCodeName());
+        if (attachmentModel == null) {
+            reslutView.setMsg("请上传附件");
+            reslutView.setCode("1");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(reslutView);
+        }
+        fieldCloth(projectModel, reslutView, attachmentModel);
+        if (reslutView.getCode().equals("1"))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(reslutView);
+
+        return ResponseEntity.status(HttpStatus.OK).body(reslutView);
+    }
+
+    @ApiOperation("施工模型及进度保存")
+    @RequestMapping(
+            value = "/updateconstruction",
+            method = RequestMethod.POST,
+            consumes = "application/json")
+    public ResponseEntity<?> updateconstruction(@RequestBody ProjectModel projectModel) {
+        ReslutView reslutView = new ReslutView();
+        AttachmentModel attachmentModel = attachmentService.getById(projectModel.getSubCodeName());
+        if (attachmentModel == null) {
+            reslutView.setMsg("请上传附件");
+            reslutView.setCode("1");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(reslutView);
+        }
+        projectModel.setSubCodeName(null);
+        AttachmentModel xml = attachmentService.getById(projectModel.getStage());//XML附件
+        projectModel.setStage(null);
+        if (null == xml) {
+            reslutView.setMsg("请上传XML文件");
+            reslutView.setCode("1");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(reslutView);
+
+        }
+        if (projectModel.getId() == null || projectModel.getId().trim().equals("")) {
+            projectModel.setAttachmentXml(xml);
+            projectModel.setAttachment(attachmentModel);
+            saveProject(projectModel);
+        } else {
+            ProjectModel projectData = projectService.getById(projectModel.getId());
+            projectData.setBuildingCode(projectModel.getBuildingCode());
+            projectData.setSpeciality(projectModel.getSpeciality());
+            projectData.setAttachmentXml(attachmentModel);
+            projectData.setAttachmentXml(xml);
+            projectService.update(projectData);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(reslutView);
+    }
+
+    @ApiOperation("倾斜摄影和航拍录像保存")
+    @RequestMapping(
+            value = "/updateimagemap",
+            method = RequestMethod.POST,
+            consumes = "application/json")
+    public ResponseEntity<?> updateimagemap(@RequestBody ProjectModel projectModel) {
+        ReslutView reslutView = new ReslutView();
+        AttachmentModel attachmentModel = attachmentService.getById(projectModel.getSubCodeName());
+        if (attachmentModel == null) {
+            reslutView.setMsg("请上传附件");
+            reslutView.setCode("1");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(reslutView);
+        }
+        projectModel.setSubCodeName(null);
+        projectModel.setAttachment(attachmentModel);
+        ProjectModel projectData = projectService.getByProjectCodeAndImageDate(projectModel.getProjectCode(), projectModel.getImageDate());
+
+        if (projectData == null) {
+            saveProject(projectModel);
+        } else {
+            projectData.setVersion(projectData.getVersion() + 1);
+            projectData.setImageDate(projectModel.getImageDate());
+            projectData.setAttachment(attachmentModel);
+            projectService.update(projectData);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(reslutView);
+    }
+
+    @ApiOperation("竣工模型及验收资料保存")
+    @RequestMapping(
+            value = "/updatecompletion",
+            method = RequestMethod.POST,
+            consumes = "application/json")
+    public ResponseEntity<?> updatecompletion(@RequestBody ProjectModel projectModel) {
+        ReslutView reslutView = new ReslutView();
+        AttachmentModel attachmentModel = attachmentService.getById(projectModel.getSubCodeName());
+        if (attachmentModel == null) {
+            reslutView.setMsg("请上传附件");
+            reslutView.setCode("1");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(reslutView);
+        }
+        projectModel.setSubCodeName(null);
+        AttachmentModel xml = attachmentService.getById(projectModel.getStage());//XML附件
+        projectModel.setStage(null);
+        if (null == xml) {
+            reslutView.setMsg("请上传文件");
+            reslutView.setCode("1");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(reslutView);
+
+        }
+        if (projectModel.getId() == null || projectModel.getId().trim().equals("")) {
+            projectModel.setAttachmentXml(xml);
+            projectModel.setAttachment(attachmentModel);
+            saveProject(projectModel);
+        } else {
+            ProjectModel projectData = projectService.getById(projectModel.getId());
+            projectData.setBuildingCode(projectModel.getBuildingCode());
+            projectData.setSpeciality(projectModel.getSpeciality());
+            projectData.setAttachmentXml(attachmentModel);
+            projectData.setAttachmentXml(xml);
+            projectService.update(projectData);
         }
         return ResponseEntity.status(HttpStatus.OK).body(reslutView);
     }
 
     private void saveProject(@RequestBody ProjectModel projectModel) {
         projectModel.setId(Common.GetKey());
-        projectModel.setSubCodeName(null);
         projectModel.setCreateTime(Common.GetDateTime());
         projectService.save(projectModel);
     }
@@ -159,6 +236,7 @@ public class ProjectController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(reslutView);
     }
+
     /**
      * 场布类型保存逻辑
      *
@@ -177,10 +255,9 @@ public class ProjectController {
             return;
 
         }
-
-
         projectModel.setSubCodeName(null);
         projectModel.setAttachmentXml(xml);
+        projectModel.setAttachment(attachmentModel);
         if (null == projectData) {
             saveProject(projectModel);
             reslutView.setData(projectModel);
@@ -188,7 +265,7 @@ public class ProjectController {
             projectModel.setId(projectData.getId());
             projectModel.setCreateTime(Common.GetDateTime());
             projectModel.setVersion(projectData.getVersion() + 1);
-            projectModel.setAttachment(attachmentModel);
+
             projectService.update(projectModel);
             reslutView.setData(projectModel);
         }

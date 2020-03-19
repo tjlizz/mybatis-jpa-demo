@@ -1,8 +1,10 @@
 package lz.cim.api.jpa.project.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lz.cim.api.core.tool.Common;
 import lz.cim.api.jpa.attchment.model.AttachmentModel;
 
 import javax.persistence.*;
@@ -15,6 +17,8 @@ import java.util.Date;
 public class ProjectModel {
     public ProjectModel() {
         this.version = 1;
+        this.setCreateTime(Common.GetDateTime());
+        this.setId(Common.GetKey());
     }
 
     @Id
@@ -34,6 +38,7 @@ public class ProjectModel {
     @Column(name = "SUBCODENAME")
     private String subCodeName;
     @Column(name = "IMAGEDATE")
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date imageDate;
     @Column(name = "BUILDINGCODE")
     private String buildingCode;

@@ -4,6 +4,7 @@ import lz.cim.api.core.query.searchmodel.SearchModel;
 import lz.cim.api.jpa.project.model.ProjectModel;
 import org.springframework.data.domain.Page;
 
+import java.util.Date;
 import java.util.List;
 
 public interface ProjectService {
@@ -12,6 +13,7 @@ public interface ProjectService {
 
     ProjectModel getByProjectCodeAndLayerCode(String projectCode, String layerCode);
 
+     ProjectModel getByProjectCodeAndImageDate(String projectCode, Date imageDate);
     ProjectModel save(ProjectModel projectModel);
 
     ProjectModel update(ProjectModel projectModel);

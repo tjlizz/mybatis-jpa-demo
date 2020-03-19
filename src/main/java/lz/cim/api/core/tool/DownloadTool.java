@@ -36,7 +36,6 @@ public class DownloadTool {
             // 设置response的Header
             response.addHeader("Content-Disposition", "attachment;filename=" + saveName);
             response.addHeader("Content-Length", "" + file.length());
-
             response.setContentLength((int) file.length());
             OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
             response.setContentType("application/octet-stream");

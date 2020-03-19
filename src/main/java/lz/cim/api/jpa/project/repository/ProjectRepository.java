@@ -5,6 +5,7 @@ import lz.cim.api.jpa.project.model.ProjectModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.Date;
 import java.util.List;
 
 public interface ProjectRepository extends JpaRepository<ProjectModel, String>, JpaSpecificationExecutor<ProjectModel> {
@@ -13,5 +14,6 @@ public interface ProjectRepository extends JpaRepository<ProjectModel, String>, 
 
     ProjectModel getByProjectCodeAndLayerCode(String projectCode, String layerCode);
 
+    ProjectModel getByProjectCodeAndAndImageDate(String projectCode, Date imageDate);
 
 }

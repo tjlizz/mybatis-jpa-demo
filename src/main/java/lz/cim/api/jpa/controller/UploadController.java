@@ -45,7 +45,6 @@ public class UploadController {
         String fileName = file.getOriginalFilename();
         savePath = savePath + "\\" + fileMd5;
         IoHelper.judeDirExists(savePath);
-
         File dest = new File(savePath + "\\" + (chunk + ".aaa"));
         try {
             file.transferTo(dest);
@@ -70,18 +69,15 @@ public class UploadController {
         IoHelper.judeDirExists(savePath);
         String date = Common.getStringDate();
         String fileName = file.getOriginalFilename();
-
         String saveName = Common.GetKey() + "." + Common.GetSuffix(fileName);
         savePath += "\\" + date;
         IoHelper.judeDirExists(savePath);
-
         savePath = savePath + "\\" + saveName;
-
         File dest = new File(savePath);
         try {
             file.transferTo(dest);
             AttachmentModel attachmentModel = getAttachmentModel(fileName, fileMd5, saveName, date);
-            reslutView.setData(attachmentModel.getId());
+            reslutView.setData(attachmentModel);
 
         } catch (IOException e) {
 
@@ -114,24 +110,17 @@ public class UploadController {
                 reslutView.setCode("2");
                 return ResponseEntity.status(HttpStatus.OK).body(reslutView);
             }
-
-
         }
-
         String filePath = appProperties.getUploadPath();
         filePath = filePath + "\\" + fileMd5 + "\\" + chunk + ".aaa";
         File file = new File(filePath);
         if (file.exists()) {
-
             if (file.length() != chunkSize) {
                 reslutView.setCode("1");
             }
-
-
         } else {
             reslutView.setCode("1");
         }
-
         return ResponseEntity.status(HttpStatus.OK).body(reslutView);
     }
 
@@ -191,7 +180,6 @@ public class UploadController {
 
         ReslutView reslutView = new ReslutView();
         reslutView = saveBigFile(fileName, fileMd5, chunks);
-
         return ResponseEntity.status(HttpStatus.OK).body(reslutView);
     }
 
